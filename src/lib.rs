@@ -1,3 +1,12 @@
+#[derive(Clone, Copy, Debug)]
+/// An enum representing the directions the snake can move in
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Snake {
     segments: Vec<(u8, u8)>,
@@ -45,11 +54,44 @@ impl Snake {
         self.segments[0]
     }
 
+    /// Moves the snake in the given direction. Used every tick of the game to move the snake
+    ///
+    /// # Parameters
+    ///
+    /// - `dir` The direction to shift the snake's head in
+    ///
+    /// # Returns
+    ///
+    /// Returns a new snake after the move
+    pub fn shift(&self, dir: Direction) -> Snake {
+        let segments = self
+            .segments
+            .iter()
+            .enumerate()
+            .map(|(i, seg)| {
+                // The head is the only thing that gets a new position, everything else takes an old
+                // position
+                if i == 0 {
+                    return match dir {
+                        Direction::Up => (seg.0, seg.1 - 1),
+                        Direction::Down => (seg.0, seg.1 + 1),
+                        Direction::Left => (seg.0 - 1, seg.1),
+                        Direction::Right => (seg.0 + 1, seg.1),
+                    };
+                }
+
+                // Getting the position of the previous segment
+                self.segments[i - 1]
+            })
+            .collect();
+
+        Snake { segments }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::Snake;
+    use crate::{Snake, Direction};
 
     #[test]
     fn test_add_segment() {
@@ -70,5 +112,45 @@ mod tests {
         let apple_pos = (0, 0);
 
         snake.add_segment(apple_pos);
+    }
+
+    #[test]
+    /// Testing the logic behind shifting the snake
+    fn test_shift() {
+        // s
+        // s
+        // s s s s
+        //       s
+        //       s
+        let segments = vec![
+            (0, 0), 
+            (0, 1), 
+            (0, 2), 
+            (1, 2), 
+            (2, 2), 
+            (3, 2), 
+            (3, 3),
+            (3, 4)
+        ];
+
+        let snake = Snake { segments };
+
+        // s s
+        // s
+        // s s s s
+        //       s
+        //        
+        let wanted = vec![
+            (1, 0),
+            (0, 0), 
+            (0, 1), 
+            (0, 2), 
+            (1, 2), 
+            (2, 2), 
+            (3, 2), 
+            (3, 3)
+        ];
+
+        assert_eq!(snake.shift(Direction::Right).segments, wanted);
     }
 }
