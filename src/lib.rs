@@ -64,34 +64,30 @@ impl Snake {
     ///
     /// Returns a new snake after the move
     pub fn shift(&self, dir: Direction) -> Snake {
-        let segments = self
-            .segments
-            .iter()
-            .enumerate()
-            .map(|(i, seg)| {
-                // The head is the only thing that gets a new position, everything else takes an old
-                // position
-                if i == 0 {
-                    return match dir {
-                        Direction::Up => (seg.0, seg.1 - 1),
-                        Direction::Down => (seg.0, seg.1 + 1),
-                        Direction::Left => (seg.0 - 1, seg.1),
-                        Direction::Right => (seg.0 + 1, seg.1),
-                    };
-                }
+        // The only segments affected by the shift is the first head and the end tail segment:
+        // We remove the end tail segement, then create a new head at the postion of the current,
+        // then move it and append it at the start as the new head
+        let mut segments = self.segments.clone();
 
-                // Getting the position of the previous segment
-                self.segments[i - 1]
-            })
-            .collect();
+        segments.remove(segments.len() - 1);
 
+        let cur_head = self.head();
+        let new_head = match dir {
+            Direction::Up => (cur_head.0, cur_head.1 - 1),
+            Direction::Down => (cur_head.0, cur_head.1 + 1),
+            Direction::Left => (cur_head.0 - 1, cur_head.1),
+            Direction::Right => (cur_head.0 + 1, cur_head.1),
+        };
+
+        segments.insert(0, new_head);
+                
         Snake { segments }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{Snake, Direction};
+    use crate::{Direction, Snake};
 
     #[test]
     fn test_add_segment() {
@@ -123,14 +119,14 @@ mod tests {
         //       s
         //       s
         let segments = vec![
-            (0, 0), 
-            (0, 1), 
-            (0, 2), 
-            (1, 2), 
-            (2, 2), 
-            (3, 2), 
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (3, 2),
             (3, 3),
-            (3, 4)
+            (3, 4),
         ];
 
         let snake = Snake { segments };
@@ -139,16 +135,16 @@ mod tests {
         // s
         // s s s s
         //       s
-        //        
+        //
         let wanted = vec![
             (1, 0),
-            (0, 0), 
-            (0, 1), 
-            (0, 2), 
-            (1, 2), 
-            (2, 2), 
-            (3, 2), 
-            (3, 3)
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (3, 2),
+            (3, 3),
         ];
 
         assert_eq!(snake.shift(Direction::Right).segments, wanted);
