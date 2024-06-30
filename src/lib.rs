@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// An enum representing the directions the snake can move in
 pub enum Direction {
     Up,
@@ -73,10 +73,10 @@ impl Snake {
 
         let cur_head = self.head();
         let new_head = match dir {
-            Direction::Up => (cur_head.0, cur_head.1 - 1),
-            Direction::Down => (cur_head.0, cur_head.1 + 1),
-            Direction::Left => (cur_head.0 - 1, cur_head.1),
-            Direction::Right => (cur_head.0 + 1, cur_head.1),
+            Direction::Up => (cur_head.0, cur_head.1.saturating_sub(1)),
+            Direction::Down => (cur_head.0, cur_head.1.saturating_add(1)),
+            Direction::Left => (cur_head.0.saturating_sub(1), cur_head.1),
+            Direction::Right => (cur_head.0.saturating_add(1), cur_head.1),
         };
 
         segments.insert(0, new_head);
@@ -96,7 +96,7 @@ impl Snake {
 /// # Returns
 ///
 /// A tuple of vecs. The first vec is tiles to remove, and the second is tiles to add
-pub fn diff(old: Snake, new: Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
+pub fn diff(old: &Snake, new: &Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
     let old_tiles = old
         .segments
         .iter()
@@ -212,7 +212,7 @@ mod tests {
             (3, 3),
         ] };
 
-        let (old, new) = diff(old_snake, new_snake);
+        let (old, new) = diff(&old_snake, &new_snake);
 
         assert_eq!(old, vec![(3,4)]);
         assert_eq!(new, vec![(1,0)]);
