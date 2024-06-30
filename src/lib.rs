@@ -29,11 +29,11 @@ impl Snake {
     ///
     /// # Returns
     ///
-    /// A snake with a new segment
+    /// A [Snake] with a new segment
     ///
     /// # Panics
     ///
-    /// Panics if the apple_pos is equal to the head
+    /// Panics if `apple_pos` is equal to the head
     pub fn add_segment(&self, apple_pos: (u8, u8)) -> Snake {
         assert_ne!(apple_pos, self.head());
 
@@ -62,7 +62,7 @@ impl Snake {
     ///
     /// # Returns
     ///
-    /// Returns a new snake after the move
+    /// Returns a new [Snake] after the move
     pub fn shift(&self, dir: Direction) -> Snake {
         // The only segments affected by the shift is the first head and the end tail segment:
         // We remove the end tail segement, then create a new head at the postion of the current,
@@ -80,14 +80,42 @@ impl Snake {
         };
 
         segments.insert(0, new_head);
-                
+
         Snake { segments }
     }
 }
 
+/// Gets the difference between two snakes. Used for figuring out what tiles to remove from the
+/// render grid and which ones to add
+///
+/// # Parameters
+///
+/// - `old` The snake that is not being rendered
+/// - `new` The snake that is being rendered
+///
+/// # Returns
+///
+/// A tuple of vecs. The first vec is tiles to remove, and the second is tiles to add
+pub fn diff(old: Snake, new: Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
+    let old_tiles = old
+        .segments
+        .iter()
+        .filter(|x| !new.segments.contains(x))
+        .map(|x| x.to_owned())
+        .collect();
+    let new_tiles = new
+        .segments
+        .iter()
+        .filter(|x| !old.segments.contains(x))
+        .map(|x| x.to_owned())
+        .collect();
+
+    (old_tiles, new_tiles)
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{Direction, Snake};
+    use crate::{Direction, Snake, diff};
 
     #[test]
     fn test_add_segment() {
@@ -148,5 +176,45 @@ mod tests {
         ];
 
         assert_eq!(snake.shift(Direction::Right).segments, wanted);
+    }
+
+    #[test]
+    fn test_diff() {
+        // s
+        // s
+        // s s s s
+        //       s
+        //       s
+        let old_snake = Snake { segments: vec![
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (3, 2),
+            (3, 3),
+            (3, 4),
+        ] };
+
+        // s s
+        // s
+        // s s s s
+        //       s
+        //
+        let new_snake = Snake { segments: vec![
+            (1, 0),
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (1, 2),
+            (2, 2),
+            (3, 2),
+            (3, 3),
+        ] };
+
+        let (old, new) = diff(old_snake, new_snake);
+
+        assert_eq!(old, vec![(3,4)]);
+        assert_eq!(new, vec![(1,0)]);
     }
 }
