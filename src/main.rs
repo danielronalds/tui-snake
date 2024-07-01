@@ -60,24 +60,13 @@ fn main() -> io::Result<()> {
 
         let new_snake = snake.shift(dir);
 
-        let (new_x, new_y) = new_snake.head();
-
-        let out_of_bounds = new_snake.head() == snake.head()
-            || new_x as usize == grid.width()
-            || new_y as usize == grid.height();
-        if out_of_bounds {
+        if out_of_bounds(&new_snake, &snake, &grid) {
             break;
         }
 
         let (old, new) = diff(&snake, &new_snake);
 
-        for cell in old {
-            let _ = grid.set_cell(cell.0.into(), cell.1.into(), None);
-        }
-
-        for cell in new {
-            let _ = grid.set_cell(cell.0.into(), cell.1.into(), snake_cell.clone());
-        }
+        update_grid(&mut grid, old, new);
 
         grid.draw()?;
         snake = new_snake;
@@ -88,4 +77,24 @@ fn main() -> io::Result<()> {
     terminal::disable_raw_mode()?;
 
     Ok(())
+}
+
+fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool {
+    let (new_x, new_y) = new_snake.head();
+
+    new_snake.head() == old_snake.head()
+        || new_x as usize == grid.width()
+        || new_y as usize == grid.height()
+}
+
+fn update_grid(grid: &mut Grid, cells_to_delete: Vec<(u8, u8)>, cells_to_add: Vec<(u8, u8)>) {
+    let snake_cell = Cell::build(Color::Green, "  ");
+
+    for cell in cells_to_delete {
+        let _ = grid.set_cell(cell.0.into(), cell.1.into(), None);
+    }
+
+    for cell in cells_to_add {
+        let _ = grid.set_cell(cell.0.into(), cell.1.into(), snake_cell.clone());
+    }
 }
