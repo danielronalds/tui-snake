@@ -83,6 +83,15 @@ impl Snake {
 
         Snake { segments }
     }
+
+    /// The score the snake has currently achieved
+    ///
+    /// # Returns
+    ///
+    /// The number of segments the snake has counting the head
+    pub fn score(&self) -> usize  {
+        self.segments.len()
+    }
 }
 
 /// Gets the difference between two snakes. Used for figuring out what tiles to remove from the

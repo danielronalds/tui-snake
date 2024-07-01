@@ -76,6 +76,8 @@ fn main() -> io::Result<()> {
 
     terminal::disable_raw_mode()?;
 
+    println!("You scored {} points!", snake.score());
+
     Ok(())
 }
 
