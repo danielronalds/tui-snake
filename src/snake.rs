@@ -92,7 +92,7 @@ impl Snake {
     /// # Returns
     ///
     /// The number of segments the snake has counting the head
-    pub fn score(&self) -> usize  {
+    pub fn score(&self) -> usize {
         self.segments.len()
     }
 
@@ -108,7 +108,7 @@ impl Snake {
     ///
     /// `true` if any segment of the snake collides with the given position
     pub fn occupies(&self, pos: &(u8, u8)) -> bool {
-        self.segments.iter().any(|x| x == pos) 
+        self.segments.iter().any(|x| x == pos)
     }
 
     /// Figures out if the snake is colliding with itself at any point
@@ -161,7 +161,7 @@ pub fn diff(old: &Snake, new: &Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
 /// - `old_snake` The old snake that was previosly rendered
 /// - `grid` The grid the game is being played on
 ///
-/// # Returns 
+/// # Returns
 ///
 /// True if the snake is out of bounds
 pub fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool {
@@ -176,7 +176,7 @@ pub fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool 
 ///
 /// NOTE: Doesn't call grid.draw
 ///
-/// # Paremeters 
+/// # Paremeters
 ///
 /// - `new_snake` The new shifted snake
 /// - `old_snake` The old snake that was previosly rendered
@@ -197,7 +197,7 @@ pub fn render_snake(new_snake: &Snake, old_snake: &Snake, grid: &mut Grid) {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Direction, Snake, diff};
+    use crate::{diff, Direction, Snake};
 
     #[test]
     fn test_add_segment() {
@@ -267,36 +267,40 @@ mod tests {
         // s s s s
         //       s
         //       s
-        let old_snake = Snake { segments: vec![
-            (0, 0),
-            (0, 1),
-            (0, 2),
-            (1, 2),
-            (2, 2),
-            (3, 2),
-            (3, 3),
-            (3, 4),
-        ] };
+        let old_snake = Snake {
+            segments: vec![
+                (0, 0),
+                (0, 1),
+                (0, 2),
+                (1, 2),
+                (2, 2),
+                (3, 2),
+                (3, 3),
+                (3, 4),
+            ],
+        };
 
         // s s
         // s
         // s s s s
         //       s
         //
-        let new_snake = Snake { segments: vec![
-            (1, 0),
-            (0, 0),
-            (0, 1),
-            (0, 2),
-            (1, 2),
-            (2, 2),
-            (3, 2),
-            (3, 3),
-        ] };
+        let new_snake = Snake {
+            segments: vec![
+                (1, 0),
+                (0, 0),
+                (0, 1),
+                (0, 2),
+                (1, 2),
+                (2, 2),
+                (3, 2),
+                (3, 3),
+            ],
+        };
 
         let (old, new) = diff(&old_snake, &new_snake);
 
-        assert_eq!(old, vec![(3,4)]);
-        assert_eq!(new, vec![(1,0)]);
+        assert_eq!(old, vec![(3, 4)]);
+        assert_eq!(new, vec![(1, 0)]);
     }
 }

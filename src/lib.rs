@@ -2,4 +2,4 @@ mod apple;
 pub use apple::Apple;
 
 mod snake;
-pub use snake::{diff, Snake, Direction, render_snake, out_of_bounds};
+pub use snake::{diff, out_of_bounds, render_snake, Direction, Snake};

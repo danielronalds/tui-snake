@@ -38,7 +38,7 @@ impl Apple {
 
     /// Figures out if an apple has been eaten by the snake
     ///
-    /// # Parameters 
+    /// # Parameters
     ///
     /// - `snake` The snake that could've eaten the apple
     ///
