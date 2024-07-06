@@ -3,10 +3,12 @@ use std::{io, time::Duration};
 use crossterm::{
     cursor,
     event::{poll, read, Event, KeyCode},
-    execute, terminal,
+    execute,
+    style::Color,
+    terminal,
 };
 
-use tui_canvas::Grid;
+use tui_canvas::{Cell, Grid};
 use tui_snake::{out_of_bounds, render_snake, Apple, Direction, Snake};
 
 fn main() {
@@ -22,14 +24,15 @@ fn play_game() -> io::Result<usize> {
 
     terminal::enable_raw_mode()?;
 
-    let mut grid = Grid::new(30, 30);
+    let mut grid = Grid::new(32, 32);
+    add_border(&mut grid);
 
     let mut dir = Direction::Down;
     let mut snake = Snake::default()
-        .add_segment((0, 1))
-        .add_segment((0, 2))
-        .add_segment((0, 3))
-        .add_segment((0, 4));
+        .add_segment((1, 2))
+        .add_segment((1, 3))
+        .add_segment((1, 4))
+        .add_segment((1, 5));
 
     let mut apple = Apple::place(&mut grid, &snake);
 
@@ -65,7 +68,7 @@ fn play_game() -> io::Result<usize> {
 
         let mut new_snake = snake.shift(dir);
 
-        if out_of_bounds(&new_snake, &snake, &grid) || new_snake.colliding_with_self() {
+        if out_of_bounds(&new_snake, &grid) || new_snake.colliding_with_self() {
             break;
         }
 
@@ -85,4 +88,20 @@ fn play_game() -> io::Result<usize> {
     terminal::disable_raw_mode()?;
 
     Ok(snake.score())
+}
+
+fn add_border(grid: &mut Grid) {
+    let border_cell = Cell::build(Color::White, "  ");
+
+    // Top and bottom
+    for i in 0..(grid.width() - 1) {
+        let _ = grid.set_cell(i, 0, border_cell.clone());
+        let _ = grid.set_cell(i, grid.height() - 1, border_cell.clone());
+    }
+
+    // Sides
+    for i in 0..(grid.height()) {
+        let _ = grid.set_cell(0, i, border_cell.clone());
+        let _ = grid.set_cell(grid.width() - 1, i, border_cell.clone());
+    }
 }

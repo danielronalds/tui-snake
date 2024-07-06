@@ -18,7 +18,7 @@ pub struct Snake {
 impl Default for Snake {
     fn default() -> Self {
         Snake {
-            segments: vec![(0, 0)],
+            segments: vec![(1, 1)],
         }
     }
 }
@@ -158,18 +158,18 @@ pub fn diff(old: &Snake, new: &Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
 /// # Parameters
 ///
 /// - `new_snake` The new shifted snake
-/// - `old_snake` The old snake that was previosly rendered
 /// - `grid` The grid the game is being played on
 ///
 /// # Returns
 ///
 /// True if the snake is out of bounds
-pub fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool {
+pub fn out_of_bounds(new_snake: &Snake, grid: &Grid) -> bool {
     let (new_x, new_y) = new_snake.head();
 
-    new_snake.head() == old_snake.head()
-        || new_x as usize == grid.width()
-        || new_y as usize == grid.height()
+    new_x == 0
+        || new_y == 0
+        || new_x as usize == grid.width() - 1
+        || new_y as usize == grid.height() - 1
 }
 
 /// Renders the snake to the given Grid
