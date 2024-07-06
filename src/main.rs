@@ -6,12 +6,17 @@ use crossterm::{
     execute, terminal,
 };
 
-use tui_canvas::{Cell, Grid};
+use tui_canvas::Grid;
 use tui_snake::{Direction, Snake, Apple, render_snake, out_of_bounds};
 
-use crossterm::style::Color;
 
-fn main() -> io::Result<()> {
+fn main() {
+    if let Ok(score) = play_game() {
+        println!("You scored {} points!", score);
+    }
+}
+
+fn play_game() -> io::Result<usize> {
     let mut stdout = io::stdout();
 
     execute!(stdout, terminal::EnterAlternateScreen, cursor::Hide,)?;
@@ -20,15 +25,10 @@ fn main() -> io::Result<()> {
 
     let mut grid = Grid::new(30, 30);
 
+    let mut dir = Direction::Down;
     let mut snake = Snake::default().add_segment((0, 1)).add_segment((0, 2));
 
-    let snake_cell = Cell::build(Color::Green, "  ");
-
     let mut apple = Apple::place(&mut grid, &snake);
-
-    let _ = grid.set_cell(0, 0, snake_cell.clone());
-
-    let mut dir = Direction::Down;
 
     loop {
         if poll(Duration::from_millis(80))? {
@@ -81,7 +81,5 @@ fn main() -> io::Result<()> {
 
     terminal::disable_raw_mode()?;
 
-    println!("You scored {} points!", snake.score());
-
-    Ok(())
+    Ok(snake.score())
 }
