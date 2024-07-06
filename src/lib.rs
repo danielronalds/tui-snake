@@ -92,6 +92,21 @@ impl Snake {
     pub fn score(&self) -> usize  {
         self.segments.len()
     }
+
+    /// Figures out if the snake occupies the space at the given coordinates.
+    ///
+    /// NOTE: This is costly as it requires iterating through the whole snake
+    ///
+    /// # Parameters
+    ///
+    /// - `pos` The position to check
+    ///
+    /// # Returns
+    ///
+    /// `true` if any segment of the snake collides with the given position
+    pub fn occupies(&self, pos: &(u8, u8)) -> bool {
+        self.segments.iter().find(|x| x.to_owned() == pos).is_some() 
+    }
 }
 
 /// Gets the difference between two snakes. Used for figuring out what tiles to remove from the
