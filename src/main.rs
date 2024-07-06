@@ -1,5 +1,3 @@
-mod apple;
-
 use std::{io, time::Duration};
 
 use crossterm::{
@@ -9,11 +7,9 @@ use crossterm::{
 };
 
 use tui_canvas::{Cell, Grid};
-use tui_snake::{diff, Direction, Snake};
+use tui_snake::{diff, Direction, Snake, Apple};
 
 use crossterm::style::Color;
-
-use apple::place_apple;
 
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
@@ -28,7 +24,7 @@ fn main() -> io::Result<()> {
 
     let snake_cell = Cell::build(Color::Green, "  ");
 
-    let mut apple = place_apple(&mut grid, &snake);
+    let mut apple = Apple::place(&mut grid, &snake);
 
     let _ = grid.set_cell(0, 0, snake_cell.clone());
 
@@ -70,9 +66,9 @@ fn main() -> io::Result<()> {
             break;
         }
 
-        if new_snake.head() == apple {
-            new_snake = snake.add_segment(apple);
-            apple = place_apple(&mut grid, &new_snake);
+        if apple.is_eaten(&snake) {
+            new_snake = snake.add_segment(apple.pos());
+            apple = Apple::place(&mut grid, &new_snake);
         }
 
         render_snake(&new_snake, &snake, &mut grid);
