@@ -1,3 +1,6 @@
+use crossterm::style::Color;
+use tui_canvas::{Cell, Grid};
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 /// An enum representing the directions the snake can move in
 pub enum Direction {
@@ -148,6 +151,48 @@ pub fn diff(old: &Snake, new: &Snake) -> (Vec<(u8, u8)>, Vec<(u8, u8)>) {
         .collect();
 
     (old_tiles, new_tiles)
+}
+
+/// Figures out if the snake is out of the bounds of the grid
+///
+/// # Parameters
+///
+/// - `new_snake` The new shifted snake
+/// - `old_snake` The old snake that was previosly rendered
+/// - `grid` The grid the game is being played on
+///
+/// # Returns 
+///
+/// True if the snake is out of bounds
+pub fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool {
+    let (new_x, new_y) = new_snake.head();
+
+    new_snake.head() == old_snake.head()
+        || new_x as usize == grid.width()
+        || new_y as usize == grid.height()
+}
+
+/// Renders the snake to the given Grid
+///
+/// NOTE: Doesn't call grid.draw
+///
+/// # Paremeters 
+///
+/// - `new_snake` The new shifted snake
+/// - `old_snake` The old snake that was previosly rendered
+/// - `grid` The grid the game is being played on
+pub fn render_snake(new_snake: &Snake, old_snake: &Snake, grid: &mut Grid) {
+    let snake_cell = Cell::build(Color::Green, "  ");
+
+    let (cells_to_delete, cells_to_add) = diff(old_snake, new_snake);
+
+    for cell in cells_to_delete {
+        let _ = grid.set_cell(cell.0.into(), cell.1.into(), None);
+    }
+
+    for cell in cells_to_add {
+        let _ = grid.set_cell(cell.0.into(), cell.1.into(), snake_cell.clone());
+    }
 }
 
 #[cfg(test)]
