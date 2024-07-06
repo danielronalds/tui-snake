@@ -7,8 +7,7 @@ use crossterm::{
 };
 
 use tui_canvas::Grid;
-use tui_snake::{Direction, Snake, Apple, render_snake, out_of_bounds};
-
+use tui_snake::{out_of_bounds, render_snake, Apple, Direction, Snake};
 
 fn main() {
     if let Ok(score) = play_game() {
@@ -26,7 +25,11 @@ fn play_game() -> io::Result<usize> {
     let mut grid = Grid::new(30, 30);
 
     let mut dir = Direction::Down;
-    let mut snake = Snake::default().add_segment((0, 1)).add_segment((0, 2));
+    let mut snake = Snake::default()
+        .add_segment((0, 1))
+        .add_segment((0, 2))
+        .add_segment((0, 3))
+        .add_segment((0, 4));
 
     let mut apple = Apple::place(&mut grid, &snake);
 
@@ -62,7 +65,7 @@ fn play_game() -> io::Result<usize> {
 
         let mut new_snake = snake.shift(dir);
 
-        if out_of_bounds(&new_snake, &snake, &grid)  || new_snake.colliding_with_self() {
+        if out_of_bounds(&new_snake, &snake, &grid) || new_snake.colliding_with_self() {
             break;
         }
 
