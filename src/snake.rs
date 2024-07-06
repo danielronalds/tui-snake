@@ -105,7 +105,7 @@ impl Snake {
     ///
     /// `true` if any segment of the snake collides with the given position
     pub fn occupies(&self, pos: &(u8, u8)) -> bool {
-        self.segments.iter().find(|x| x.to_owned() == pos).is_some() 
+        self.segments.iter().any(|x| x == pos) 
     }
 }
 

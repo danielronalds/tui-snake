@@ -66,7 +66,7 @@ fn main() -> io::Result<()> {
             break;
         }
 
-        if apple.is_eaten(&snake) {
+        if apple.is_eaten(&new_snake) {
             new_snake = snake.add_segment(apple.pos());
             apple = Apple::place(&mut grid, &new_snake);
         }
@@ -98,7 +98,7 @@ fn out_of_bounds(new_snake: &Snake, old_snake: &Snake, grid: &Grid) -> bool {
 fn render_snake(new_snake: &Snake, old_snake: &Snake, grid: &mut Grid) {
     let snake_cell = Cell::build(Color::Green, "  ");
 
-    let (cells_to_delete, cells_to_add) = diff(&old_snake, &new_snake);
+    let (cells_to_delete, cells_to_add) = diff(old_snake, new_snake);
 
     for cell in cells_to_delete {
         let _ = grid.set_cell(cell.0.into(), cell.1.into(), None);

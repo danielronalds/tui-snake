@@ -21,10 +21,10 @@ impl Apple {
     pub fn place(grid: &mut Grid, snake: &Snake) -> Apple {
         let mut rng = rand::thread_rng();
 
-        let mut apple = gen_apple(&mut rng, &grid);
+        let mut apple = gen_apple(&mut rng, grid);
 
         while snake.occupies(&apple) {
-            apple = gen_apple(&mut rng, &grid);
+            apple = gen_apple(&mut rng, grid);
         }
 
         let _ = grid.set_cell(
