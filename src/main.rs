@@ -62,7 +62,7 @@ fn main() -> io::Result<()> {
 
         let mut new_snake = snake.shift(dir);
 
-        if out_of_bounds(&new_snake, &snake, &grid) {
+        if out_of_bounds(&new_snake, &snake, &grid)  || new_snake.colliding_with_self() {
             break;
         }
 

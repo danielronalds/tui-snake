@@ -107,6 +107,19 @@ impl Snake {
     pub fn occupies(&self, pos: &(u8, u8)) -> bool {
         self.segments.iter().any(|x| x == pos) 
     }
+
+    /// Figures out if the snake is colliding with itself at any point
+    ///
+    /// # Returns
+    ///
+    /// True if the head is colliding with apart of it's body
+    pub fn colliding_with_self(&self) -> bool {
+        let mut segments = self.segments.iter();
+
+        let head = segments.next().expect("Snake will always have a head");
+
+        segments.any(|x| x == head)
+    }
 }
 
 /// Gets the difference between two snakes. Used for figuring out what tiles to remove from the
